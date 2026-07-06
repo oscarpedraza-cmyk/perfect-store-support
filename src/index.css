@@ -1,0 +1,67 @@
+:root {
+  --ink: #15141f;
+  --ink-soft: #55506b;
+  --bg-dark: #100e18;
+  --bg-dark-elevated: #1b1826;
+  --surface: #ffffff;
+  --surface-alt: #f3f1fa;
+  --border: rgba(21, 20, 31, 0.1);
+  --border-dark: rgba(255, 255, 255, 0.12);
+
+  --accent: #d7ff3d;
+  --accent-ink: #15141f;
+  --good: #1fa971;
+  --good-bg: rgba(31, 169, 113, 0.12);
+  --bad: #ff5c7a;
+  --bad-bg: rgba(255, 92, 122, 0.1);
+  --warn: #ffb020;
+  --warn-bg: rgba(255, 176, 32, 0.12);
+
+  --font-head: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --font-body: 'Inter', 'Segoe UI', sans-serif;
+
+  font: 16px/1.55 var(--font-body);
+  color: var(--ink);
+  background: var(--surface);
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-head);
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0;
+}
+
+p {
+  margin: 0;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+}
+
+ul {
+  margin: 0;
+  padding: 0;
+}
