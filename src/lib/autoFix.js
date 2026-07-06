@@ -26,12 +26,16 @@ async function compressToTarget(canvas, maxKB) {
   if (!maxKB) return blobFromCanvas(canvas, 'image/jpeg', 0.92)
   let quality = 0.92
   let blob = await blobFromCanvas(canvas, 'image/jpeg', quality)
-  while (blob && blob.size / 1024 > maxKB && quality > 0.35) {
+  while (blob && blob.size / 1024 > maxKB && quality > 0.55) {
     quality -= 0.08
     blob = await blobFromCanvas(canvas, 'image/jpeg', quality)
   }
   return blob
 }
+
+// No agrandamos la foto más de un 15% sobre su resolución real: estirar más allá
+// de eso produce pixelado/borrosidad visible en vez de mejorar la calidad.
+const MAX_UPSCALE = 1.15
 
 // Genera una versión corregida de la foto: recorta al encuadre correcto,
 // ajusta brillo/saturación si están fuera de rango, y comprime al peso objetivo.
@@ -46,10 +50,16 @@ export async function autoFixImage(file, analysis, spec) {
 
   const crop = centerCropRect(sourceImg.naturalWidth, sourceImg.naturalHeight, targetRatio)
 
+  const scale = Math.min(MAX_UPSCALE, outputDims.width / crop.sw)
+  const finalWidth = Math.max(1, Math.round(crop.sw * scale))
+  const finalHeight = Math.max(1, Math.round(crop.sh * scale))
+
   const canvas = document.createElement('canvas')
-  canvas.width = outputDims.width
-  canvas.height = outputDims.height
+  canvas.width = finalWidth
+  canvas.height = finalHeight
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = true
+  ctx.imageSmoothingQuality = 'high'
 
   if (useWhiteBg) {
     ctx.fillStyle = '#ffffff'
@@ -71,12 +81,18 @@ export async function autoFixImage(file, analysis, spec) {
   const wantsPngOnly = spec.formats.length === 1 && spec.formats[0] === 'png'
   const blob = wantsPngOnly ? await blobFromCanvas(canvas, 'image/png') : await compressToTarget(canvas, spec.maxKB)
 
+  const minDims = spec.minDims || spec.dims
+  const belowMinResolution = canvas.width < minDims.width || canvas.height < minDims.height
+
   return {
     blob,
     url: URL.createObjectURL(blob),
     width: canvas.width,
     height: canvas.height,
     sizeKB: blob.size / 1024,
+    warning: belowMinResolution
+      ? `Tu foto original no tiene suficiente resolución para llegar a ${minDims.width}×${minDims.height}px sin verse borrosa. Quedó en ${canvas.width}×${canvas.height}px — para mejorarla de verdad, toma una foto nueva más cerca o con mejor cámara.`
+      : null,
   }
 }
 

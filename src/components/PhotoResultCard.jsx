@@ -101,6 +101,12 @@ export default function PhotoResultCard({ item, onFix, onRemove, onReanalyzeFixe
               <p>
                 <strong>Lista:</strong> {fixed.width}×{fixed.height}px · {Math.round(fixed.sizeKB)}KB
               </p>
+              {fixed.warning && (
+                <p className="fixed-panel__warning">
+                  <Icon name="warn" size={14} />
+                  {fixed.warning}
+                </p>
+              )}
               <div className="fixed-panel__actions">
                 <a className="btn btn--dark" href={fixed.url} download={`corregida-${item.file.name.replace(/\.[^.]+$/, '')}.jpg`}>
                   <Icon name="download" size={16} />
