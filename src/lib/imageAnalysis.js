@@ -131,23 +131,40 @@ async function computeSegmentation(file, origCtx, w, h) {
   return { occupancyPct, paddingPct, avgBg, isWhiteBg, cutoutUrl, bbox, maskCanvas }
 }
 
+let cocoModelPromise = null
+function getCocoModel() {
+  if (!cocoModelPromise) {
+    cocoModelPromise = Promise.all([import('@tensorflow/tfjs'), import('@tensorflow-models/coco-ssd')]).then(([, cocoSsd]) =>
+      cocoSsd.load({ base: 'lite_mobilenet_v2' }),
+    )
+  }
+  return cocoModelPromise
+}
+
+// Detecta objetos generales en la foto (manos/personas, botellas, vasos, celulares, etc.)
+// usando COCO-SSD. Sirve para avisar cuando hay elementos ajenos al plato en el encuadre.
+async function detectObjects(img) {
+  const model = await getCocoModel()
+  const predictions = await model.detect(img, 10, 0.55)
+  return predictions.map((p) => ({ class: p.class, score: p.score }))
+}
+
 // Analiza un archivo de imagen y devuelve todas las métricas medibles.
 // `withSegmentation` corre el modelo de IA de recorte de fondo (más lento, ~1-3s).
-export async function analyzeImage(file, { withSegmentation = true } = {}) {
+// `withObjectDetection` corre COCO-SSD para detectar objetos ajenos al plato en el encuadre.
+export async function analyzeImage(file, { withSegmentation = true, withObjectDetection = true } = {}) {
   const { img, url } = await loadImage(file)
   try {
     const { canvas, ctx, w, h } = drawToCanvas(img)
     const { saturation, brightness } = computeBrightnessSaturation(ctx, w, h)
     const sharpness = computeSharpness(ctx, w, h)
 
-    let segmentation = null
-    if (withSegmentation) {
-      try {
-        segmentation = await computeSegmentation(file, ctx, w, h)
-      } catch (e) {
-        segmentation = { error: e?.message || 'No se pudo analizar el fondo/encuadre' }
-      }
-    }
+    const [segmentation, objects] = await Promise.all([
+      withSegmentation
+        ? computeSegmentation(file, ctx, w, h).catch((e) => ({ error: e?.message || 'No se pudo analizar el fondo/encuadre' }))
+        : Promise.resolve(null),
+      withObjectDetection ? detectObjects(img).catch(() => null) : Promise.resolve(null),
+    ])
 
     return {
       fileName: file.name,
@@ -159,6 +176,7 @@ export async function analyzeImage(file, { withSegmentation = true } = {}) {
       brightness,
       sharpness,
       segmentation,
+      objects,
       previewUrl: url,
       analysisCanvas: canvas,
     }

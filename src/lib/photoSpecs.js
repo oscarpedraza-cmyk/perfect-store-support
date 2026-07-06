@@ -15,6 +15,7 @@ export const PHOTO_TYPES = [
     checkBackground: false,
     checkPadding: false,
     checkPhotoQuality: true,
+    checkExtraObjects: true,
     notes: [
       'Siempre debe ser la foto de un plato representativo del menú.',
       'Debe estar bien iluminada, sin sombras fuertes.',
@@ -35,6 +36,7 @@ export const PHOTO_TYPES = [
     checkBackground: false,
     checkPadding: false,
     checkPhotoQuality: false,
+    checkExtraObjects: false,
     notes: [
       'Debe incluir el nombre de la marca.',
       'Debe ser una imagen/diseño, no una foto.',
@@ -56,10 +58,12 @@ export const PHOTO_TYPES = [
     checkBackground: true,
     checkPadding: true,
     checkPhotoQuality: true,
+    checkExtraObjects: true,
     notes: [
       'El plato debe estar centrado y enfocado (no borrosa, pixelada ni estirada).',
       'Ambiente higiénico y organizado.',
       'Sin zoom exagerado ni texto/banners.',
+      'Sin manos, envases, latas ni otros objetos ajenos al plato en el encuadre.',
     ],
   },
   {
@@ -76,6 +80,7 @@ export const PHOTO_TYPES = [
     requireWhiteBackground: true,
     checkPadding: true,
     checkPhotoQuality: true,
+    checkExtraObjects: true,
     notes: [
       'Fondo blanco obligatorio.',
       'Siempre debe ser la foto de un plato/ingrediente real, bien iluminada.',

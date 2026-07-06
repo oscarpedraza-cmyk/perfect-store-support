@@ -9,11 +9,52 @@ function criterion(key, label, pass, detail) {
   return { key, label, pass, detail }
 }
 
+// Clases de COCO-SSD que SÍ son el producto (no se marcan como "extra").
+const FOOD_CLASSES = new Set(['banana', 'apple', 'sandwich', 'orange', 'broccoli', 'carrot', 'hot dog', 'pizza', 'donut', 'cake'])
+// Elementos normales de cualquier foto de plato (vajilla/mesa) — tampoco se marcan.
+const NEUTRAL_CLASSES = new Set(['bowl', 'dining table'])
+
+const CLASS_LABELS_ES = {
+  person: 'una mano/persona',
+  bottle: 'una botella',
+  cup: 'un vaso',
+  'wine glass': 'una copa',
+  fork: 'un tenedor',
+  knife: 'un cuchillo',
+  spoon: 'una cuchara',
+  'cell phone': 'un celular',
+  remote: 'un control remoto',
+  book: 'un libro',
+  clock: 'un reloj',
+  vase: 'un florero',
+  scissors: 'unas tijeras',
+  chair: 'una silla',
+  couch: 'un sofá',
+  'potted plant': 'una planta',
+  tv: 'una pantalla/TV',
+  laptop: 'una laptop',
+  keyboard: 'un teclado',
+  mouse: 'un mouse',
+  backpack: 'una mochila',
+  umbrella: 'un paraguas',
+  handbag: 'un bolso',
+  tie: 'una corbata',
+  suitcase: 'una maleta',
+  refrigerator: 'un refrigerador',
+  oven: 'un horno',
+  toaster: 'una tostadora',
+  sink: 'un lavaplatos',
+}
+
+function translateClass(cls) {
+  return CLASS_LABELS_ES[cls] || cls
+}
+
 // Combina el resultado de analyzeImage() con el spec de photoSpecs.js
 // y devuelve una lista de criterios pass/fail listos para pintar en la UI.
 export function evaluatePhoto(analysis, spec) {
   const criteria = []
-  const { fileType, fileSizeKB, naturalWidth, naturalHeight, saturation, brightness, sharpness, segmentation } = analysis
+  const { fileType, fileSizeKB, naturalWidth, naturalHeight, saturation, brightness, sharpness, segmentation, objects } = analysis
 
   // Formato
   const ext = (fileType || '').split('/')[1]?.toLowerCase().replace('jpeg', 'jpg')
@@ -185,6 +226,26 @@ export function evaluatePhoto(analysis, spec) {
           criterion('background', 'Fondo neutro', true, 'Fondo detectado, sin reglas de color estrictas para este tipo de foto.'),
         )
       }
+    }
+  }
+
+  // Objetos ajenos al plato en el encuadre (manos, botellas, celulares, etc.)
+  if (spec.checkExtraObjects) {
+    if (!objects) {
+      criteria.push(criterion('objects', 'Elementos en el encuadre', null, 'No se pudo analizar los objetos del encuadre.'))
+    } else {
+      const extras = objects.filter((o) => !FOOD_CLASSES.has(o.class) && !NEUTRAL_CLASSES.has(o.class))
+      const noExtras = extras.length === 0
+      criteria.push(
+        criterion(
+          'objects',
+          'Elementos en el encuadre',
+          noExtras,
+          noExtras
+            ? 'Solo se detecta el producto, sin objetos ajenos.'
+            : `Se detectó ${extras.map((o) => `${translateClass(o.class)} (${round(o.score * 100, 0)}%)`).join(', ')}. La foto debe mostrar solo el plato, sin manos ni otros objetos.`,
+        ),
+      )
     }
   }
 
