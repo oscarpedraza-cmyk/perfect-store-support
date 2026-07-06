@@ -14,6 +14,7 @@ export default function Header() {
       <nav className="site-header__nav">
         <button onClick={() => scrollTo('como-funciona')}>Cómo funciona</button>
         <button onClick={() => scrollTo('guia')}>Guía de calidad</button>
+        <button onClick={() => scrollTo('descripciones')}>Descripciones</button>
         <button className="btn btn--accent btn--sm" onClick={() => scrollTo('analizador')}>
           Analizar mi foto
         </button>
