@@ -4,6 +4,7 @@ import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
 import Analyzer from './components/Analyzer'
 import DescriptionChecker from './components/DescriptionChecker'
+import MenuChecker from './components/MenuChecker'
 import QualityGuide from './components/QualityGuide'
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
@@ -19,6 +20,7 @@ export default function App() {
         <HowItWorks />
         <Analyzer />
         <DescriptionChecker />
+        <MenuChecker />
         <QualityGuide />
         <FAQ />
       </main>

@@ -39,7 +39,7 @@ function rgbToHsv(r, g, b) {
   return { s, v }
 }
 
-function computeBrightnessSaturation(ctx, w, h) {
+export function computeBrightnessSaturation(ctx, w, h) {
   const { data } = ctx.getImageData(0, 0, w, h)
   let sSum = 0
   let vSum = 0
@@ -52,7 +52,7 @@ function computeBrightnessSaturation(ctx, w, h) {
   return { saturation: sSum / n, brightness: vSum / n }
 }
 
-function computeSharpness(ctx, w, h) {
+export function computeSharpness(ctx, w, h) {
   const { data } = ctx.getImageData(0, 0, w, h)
   const gray = new Float32Array(w * h)
   for (let i = 0, p = 0; i < data.length; i += 4, p++) {
