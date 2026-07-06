@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: perfect-store-support
+    runtime: static
+    repo: https://github.com/oscarpedraza-cmyk/perfect-store-support
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    pullRequestPreviewsEnabled: false
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
