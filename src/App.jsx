@@ -1,4 +1,5 @@
 import Header from './components/Header'
+import UsageStats from './components/UsageStats'
 import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
 import Analyzer from './components/Analyzer'
@@ -11,6 +12,7 @@ export default function App() {
   return (
     <div className="app">
       <Header />
+      <UsageStats />
       <main>
         <Hero />
         <HowItWorks />

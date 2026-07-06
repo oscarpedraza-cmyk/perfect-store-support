@@ -163,6 +163,30 @@ main {
   }
 }
 
+/* ---------- usage bar ---------- */
+.usage-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+  color: var(--ink-soft);
+  text-align: center;
+}
+
+.usage-bar strong {
+  color: var(--ink);
+  font-family: var(--font-head);
+}
+
+.usage-bar svg {
+  color: var(--ink-soft);
+  flex-shrink: 0;
+}
+
 /* ---------- hero ---------- */
 .hero {
   background: radial-gradient(circle at 15% 0%, #211d33 0%, var(--bg-dark) 55%);

@@ -3,6 +3,7 @@ import { PHOTO_TYPES, getPhotoType } from '../lib/photoSpecs'
 import { analyzeImage } from '../lib/imageAnalysis'
 import { evaluatePhoto } from '../lib/evaluate'
 import { autoFixImage } from '../lib/autoFix'
+import { trackEvent } from '../lib/track'
 import Icon from './Icon'
 import PhotoResultCard from './PhotoResultCard'
 
@@ -21,6 +22,9 @@ export default function Analyzer() {
       const analysis = await analyzeImage(file)
       const evaluation = evaluatePhoto(analysis, specForItem)
       setItems((prev) => prev.map((it) => (it.id === id ? { ...it, status: 'ready', analysis, evaluation } : it)))
+      trackEvent('analyzed')
+      trackEvent(`analyzed_${specForItem.id}`)
+      if (evaluation.overallPass) trackEvent('approved')
     } catch (e) {
       setItems((prev) => prev.map((it) => (it.id === id ? { ...it, status: 'error', error: e.message } : it)))
     }
@@ -61,6 +65,7 @@ export default function Analyzer() {
       const itemSpec = getPhotoType(item.specId)
       const fixed = await autoFixImage(item.file, item.analysis, itemSpec)
       setItems((prev) => prev.map((it) => (it.id === id ? { ...it, fixing: false, fixed } : it)))
+      trackEvent('fixed')
     } catch (e) {
       setItems((prev) => prev.map((it) => (it.id === id ? { ...it, fixing: false, error: e.message } : it)))
     }
