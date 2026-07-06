@@ -19,7 +19,12 @@ export default function Analyzer() {
 
   const runAnalysis = useCallback(async (id, file, specForItem) => {
     try {
-      const analysis = await analyzeImage(file)
+      // No corras (ni descargues) los modelos de IA que este tipo de foto no necesita —
+      // ej. Logo no revisa encuadre/fondo/objetos, así que no debería bajar ~10MB de IA para nada.
+      const analysis = await analyzeImage(file, {
+        withSegmentation: Boolean(specForItem.checkBackground || specForItem.checkPadding),
+        withObjectDetection: Boolean(specForItem.checkExtraObjects),
+      })
       const evaluation = evaluatePhoto(analysis, specForItem)
       setItems((prev) => prev.map((it) => (it.id === id ? { ...it, status: 'ready', analysis, evaluation } : it)))
       trackEvent('analyzed')
@@ -116,8 +121,15 @@ export default function Analyzer() {
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}
         onClick={() => inputRef.current?.click()}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            inputRef.current?.click()
+          }
+        }}
         role="button"
         tabIndex={0}
+        aria-label="Subir foto para analizar"
       >
         <Icon name="upload" size={32} />
         <p>
