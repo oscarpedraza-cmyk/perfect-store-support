@@ -3,9 +3,8 @@ import UsageStats from './components/UsageStats'
 import Hero from './components/Hero'
 import HowItWorks from './components/HowItWorks'
 import Analyzer from './components/Analyzer'
-import DescriptionChecker from './components/DescriptionChecker'
-import MenuChecker from './components/MenuChecker'
 import QualityGuide from './components/QualityGuide'
+import DescriptionChecker from './components/DescriptionChecker'
 import FAQ from './components/FAQ'
 import Footer from './components/Footer'
 import './App.css'
@@ -18,10 +17,11 @@ export default function App() {
       <main>
         <Hero />
         <HowItWorks />
+        {/* Grupo Fotos */}
         <Analyzer />
-        <DescriptionChecker />
-        <MenuChecker />
         <QualityGuide />
+        {/* Grupo Descripciones */}
+        <DescriptionChecker />
         <FAQ />
       </main>
       <Footer />
