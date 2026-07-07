@@ -85,6 +85,21 @@ export default function PhotoResultCard({ item, onFix, onRemove, onReanalyzeFixe
           </ul>
         )}
 
+        {evaluation?.unfixableReasons?.length > 0 && (
+          <div className="retake-alert">
+            <Icon name="warn" size={18} />
+            <div>
+              <strong>Esta foto no se puede corregir del todo automáticamente.</strong>
+              <ul>
+                {evaluation.unfixableReasons.map((reason) => (
+                  <li key={reason}>{reason}</li>
+                ))}
+              </ul>
+              <p>Te recomendamos tomar una foto nueva en vez de confiar en la corrección automática.</p>
+            </div>
+          </div>
+        )}
+
         {evaluation && !evaluation.overallPass && (
           <div className="result-card__actions">
             <button className="btn btn--accent" onClick={() => onFix(item.id)} disabled={fixing}>

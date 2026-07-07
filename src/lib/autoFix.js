@@ -1,4 +1,5 @@
 import { QUALITY_RANGES } from './photoSpecs'
+import { centerCropRect, MAX_UPSCALE } from './cropMath'
 
 function loadImg(url) {
   return new Promise((resolve, reject) => {
@@ -7,15 +8,6 @@ function loadImg(url) {
     el.onerror = () => reject(new Error('No se pudo cargar la imagen para corregir'))
     el.src = url
   })
-}
-
-function centerCropRect(sw, sh, targetRatio) {
-  if (sw / sh > targetRatio) {
-    const cropW = sh * targetRatio
-    return { sx: (sw - cropW) / 2, sy: 0, sw: cropW, sh }
-  }
-  const cropH = sw / targetRatio
-  return { sx: 0, sy: (sh - cropH) / 2, sw, sh: cropH }
 }
 
 function blobFromCanvas(canvas, type, quality) {
@@ -32,10 +24,6 @@ async function compressToTarget(canvas, maxKB) {
   }
   return blob
 }
-
-// No agrandamos la foto más de un 15% sobre su resolución real: estirar más allá
-// de eso produce pixelado/borrosidad visible en vez de mejorar la calidad.
-const MAX_UPSCALE = 1.15
 
 // Genera una versión corregida de la foto: recorta al encuadre correcto,
 // ajusta brillo/saturación si están fuera de rango, y comprime al peso objetivo.

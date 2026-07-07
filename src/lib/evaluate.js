@@ -1,4 +1,5 @@
 import { QUALITY_RANGES } from './photoSpecs'
+import { predictFixedSize } from './cropMath'
 
 function round(n, d = 2) {
   const f = 10 ** d
@@ -254,5 +255,22 @@ export function evaluatePhoto(analysis, spec) {
   const score = evaluable.length > 0 ? Math.round((passCount / evaluable.length) * 100) : 0
   const overallPass = evaluable.every((c) => c.pass)
 
-  return { criteria, score, overallPass, passCount, totalCount: evaluable.length }
+  // Razones por las que "Corregir automáticamente" NO va a arreglar la foto de verdad —
+  // recorte/brillo/compresión no pueden borrar objetos ni inventar resolución que no existe.
+  const unfixableReasons = []
+  const objectsCriterion = criteria.find((c) => c.key === 'objects')
+  if (objectsCriterion?.pass === false) {
+    unfixableReasons.push('hay objetos ajenos al plato en el encuadre — el corrector no puede borrarlos de la foto')
+  }
+  if (spec.minDims) {
+    const minDims = spec.minDims
+    const predicted = predictFixedSize(naturalWidth, naturalHeight, spec)
+    if (predicted.width < minDims.width || predicted.height < minDims.height) {
+      unfixableReasons.push(
+        `la resolución de origen es muy baja — aun corrigiendo quedaría en ${predicted.width}×${predicted.height}px, por debajo del mínimo ${minDims.width}×${minDims.height}px`,
+      )
+    }
+  }
+
+  return { criteria, score, overallPass, passCount, totalCount: evaluable.length, unfixableReasons }
 }

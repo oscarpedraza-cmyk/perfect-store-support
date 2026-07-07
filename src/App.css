@@ -586,6 +586,43 @@ main {
   font-weight: 600;
 }
 
+.retake-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--bad-bg);
+  color: var(--bad);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.retake-alert svg {
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.retake-alert strong {
+  color: var(--bad);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.retake-alert ul {
+  list-style: disc;
+  padding-left: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-bottom: 8px;
+}
+
+.retake-alert p {
+  font-weight: 600;
+}
+
 .result-card__actions {
   margin-top: 16px;
 }
