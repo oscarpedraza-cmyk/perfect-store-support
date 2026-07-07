@@ -148,7 +148,10 @@ function getCocoModel() {
 // usando COCO-SSD. Sirve para avisar cuando hay elementos ajenos al plato en el encuadre.
 async function detectObjects(img) {
   const model = await getCocoModel()
-  const predictions = await model.detect(img, 10, 0.55)
+  // Umbral bajo a propósito: preferimos que se detecte de más (mostramos el % de
+  // confianza para que el usuario juzgue) a que se pase por alto una mano o una
+  // botella real en la foto, como pasó con 0.55 en una foto real de prueba.
+  const predictions = await model.detect(img, 10, 0.3)
   return predictions.map((p) => ({ class: p.class, score: p.score }))
 }
 
