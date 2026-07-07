@@ -76,7 +76,10 @@ export function computeSharpness(ctx, w, h) {
 
 async function computeSegmentation(file, origCtx, w, h) {
   const { removeBackground } = await import('@imgly/background-removal')
-  const cutoutBlob = await removeBackground(file)
+  // isnet_quint8 (~40MB) en vez del default isnet_fp16 (~80MB): la mitad de datos
+  // para el aliado. Solo necesitamos % de encuadre y color de fondo, no un recorte
+  // fotográfico perfecto — la pérdida de precisión del modelo cuantizado no importa aquí.
+  const cutoutBlob = await removeBackground(file, { model: 'isnet_quint8' })
   const cutoutUrl = URL.createObjectURL(cutoutBlob)
   const cutoutImg = await new Promise((resolve, reject) => {
     const el = new Image()
