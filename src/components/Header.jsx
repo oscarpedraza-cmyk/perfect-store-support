@@ -16,6 +16,7 @@ export default function Header() {
         <button onClick={() => scrollTo('analizador')}>Fotos</button>
         <button onClick={() => scrollTo('guia')}>Guía de calidad</button>
         <button onClick={() => scrollTo('descripciones')}>Descripciones</button>
+        <button onClick={() => scrollTo('conocimiento')}>Conocimiento</button>
         <button className="btn btn--accent btn--sm" onClick={() => scrollTo('analizador')}>
           Analizar mi foto
         </button>
